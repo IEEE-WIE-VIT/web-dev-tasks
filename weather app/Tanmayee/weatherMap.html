@@ -1,0 +1,182 @@
+<!DOCTYPE html><!--to work on HTML 5 -->
+<html lang="en">
+    <head>
+        <meta charset="utf-8"><!--to tell the browser that this file is UTF-8 encoded-->
+        
+        <title>Web App Project</title>
+        <meta name="viewport" content="width=device-width,initial scale=1"><!--to control the page's dimensions and scaling i.e.to make the webpage responsive-->
+        
+        <meta http-equiv="X-UA-Compatible" content="ie=edge"><!--to use the latest rendering engine ( edge ) -->
+        
+    </head>
+    <!--CSS-->
+    <style>
+        * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+ font: 1rem/1.3 "Roboto", sans-serif;
+    font-weight: bold;
+  background: url('https://cutewallpaper.org/21/animated-gifs-desktop-backgrounds/How-to-set-a-GIF-as-a-wallpaper-in-Windows-10-Win10-FAQ.gif') center no-repeat;
+  background-size: cover;
+    position: relative;
+  
+}
+.app{
+    display:flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+}
+header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 15px 15px;
+}
+header input{
+    width:100%;
+    max-width: 280px;
+    padding:10px 15px;
+    border: none;
+    outline: none;
+    background-color: whitesmoke;
+    border-radius: 16px 0px 16px 0px;
+    border-bottom: 3px solid #DF8E00;
+    font-size: 20px;
+    font-weight: 300;
+    transition: 0.2s ease-in;
+}
+header input:focus{
+    background-color: rgba(255,255,255,0.6);
+}
+main{
+    flex: 1 1 100%;
+    padding: 25px 25px 50px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.location .city{
+    color: floralwhite;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+.location .date{
+    color: mistyrose;
+    font-size: 16px;
+}
+.current .temp{
+    color: white;
+    font-size: 102px;
+    font-weight: 900;
+    margin: 30px 0px;
+    text-shadow: 2px 10px rgba(0,0,0,0.6);
+}
+.current .temp span{
+    font-weight: 500;
+}
+.current .weather{
+    color:chartreuse;
+    font-size: 32px;
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 15px;
+    text-shadow: 0px 3px rgba(0,0,0,0.4);
+}
+.current .range{
+    color: antiquewhite;
+    font-size: 24px;
+    font-weight: 500;
+    text-shadow: 0px 4px rgba(0,0,0,0.4);
+}
+    </style>
+    <body>
+        <div class="app"><!--this section contains all the information to be displayed in the webpage-->
+            
+            <header><!--this section enables the user to type the desired city name-->
+                
+                 <input type="text" autocomplete="off" class="search-box" placeholder="Enter your location" />
+            </header>
+            <main><!--this section contains all the weather details about the place including current date and the country it is in-->
+                
+                <section class="location">
+                    <div class="city">Delhi,IN</div>
+                    <div class="date">Mon 24 Aug 2020</div>
+                </section>
+                <div class="current">
+                    <div class="temp">28<span>°C</span></div>
+                    <div class="weather">Haze</div>
+                    <div class="range">25°C-30°C</div>
+                </div>
+            </main>
+        </div>
+        
+        <!--Vanilla Javascript-->
+        <script>
+            const api = {
+   key: "aa072b2e77f3ae29de1e1be0884e0256",
+    base: "https://api.openweathermap.org/data/2.5/"   
+            }
+      /* var imgPic={
+           rain:"https://i.pinimg.com/originals/46/45/a7/4645a79ea8f68d2fd29ed368d3f22eb8.gif";
+           haze:"https://i.pinimg.com/originals/6d/7a/1e/6d7a1ef061b28c99ab415e937df1268d.gif";
+           sunny:"https://data.whicdn.com/images/281744156/original.gif";
+           clear:"https://cutewallpaper.org/21/animated-gifs-desktop-backgrounds/How-to-set-a-GIF-as-a-wallpaper-in-Windows-10-Win10-FAQ.gif";
+       };*/
+
+const searchbox = document.querySelector(".search-box");
+ 
+searchbox.addEventListener('keypress', setQuery);
+
+function setQuery(evt){
+    if(evt.keyCode==13){
+        getResults(searchbox.value);
+    }//13 is for Enter Key i.e. the results will be displayed only after the user has pressed the Enter Key
+    
+}
+function getResults(query){
+    fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)//making the api call using the api key
+    .then(weather => {
+        return weather.json();
+          }).then(displayResults);
+}
+function displayResults(weather){
+   
+    let city=document.querySelector('.location .city');
+    city.innerText=`${weather.name},${weather.sys.country}`;
+    
+    let now=new Date();//to store the present date
+    let date=document.querySelector('.location .date');
+    date.innerText=dateBuilder(now);
+    
+    let temp=document.querySelector('.current .temp');
+    temp.innerHTML=`${Math.round(weather.main.temp).toFixed(0)}<span>°C</span>`;//rounding off the temperature to an integer value
+    
+    let weather_el=document.querySelector('.current .weather');
+    weather_el.innerText=weather.weather[0].main;
+    
+    let rnge=document.querySelector('.range');
+    rnge.innerText=`${weather.main.temp_min}°C-${weather.main.temp_max}°C`;
+}
+
+function dateBuilder(d){
+    let months=["Jan","Feb","Mar","Apr","May","June","July","Aug","Sep","Oct","Nov","Dec"];
+    
+    let days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    
+    let day=days[d.getDay()];
+    let date=d.getDate();
+    let month=months[d.getMonth()];
+    let year=d.getFullYear();
+    
+    return `${day} ${date} ${month} ${year}`;
+    
+}
+        </script>
+    </body>
+</html>
