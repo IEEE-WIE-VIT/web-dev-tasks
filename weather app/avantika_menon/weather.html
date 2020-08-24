@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   </head>
+   <link rel="stylesheet" href="bootstrap.min.css">
+   <link rel="stylesheet" href="effect.css">
+   <div class="container-fluid">
+      <body class="day">
+         <center>
+            <div id="m" >
+               <form autocomplete="off" onsubmit="return getCity(event);">
+                  <input class="form-control form-control-lg" placeholder="Search for a city..." style="width:50%; margin-top:20px" type="text" id="citynm">
+               </form>
+               <div id="diss" style="display:none">
+                  <div id="rain">
+                     <canvas id="canvas1"></canvas>
+                     <canvas id="canvas2"></canvas>
+                  </div>
+                  <div>
+                     <h1 class="display-1" id="cityname" style="line-height: 1.8"></h1>
+                     <h1 class="display-3"><span id="temp"></span> &deg;C</h1>
+                     <h6><span id="high"></span> &deg;C / <span id="low"></span> &deg;C</h6>
+                     <h1 class="display-3" id="wea"></h1>
+                     <h2 class="lead" id="dt"></h2>
+                     <h4 id="timday" ></h4>
+                     <br>
+                     <div class="row">
+                        <div class="col-sm" style="line-height: 1">
+                           <h3>Feels like</h3>
+                           <br>
+                           <h6><span id="fl"></span> &deg; C</h6>
+                        </div>
+                        <div class="col-sm" style="line-height: 1">
+                           <h3>Humidity</h3>
+                           <br>
+                           <h6><span id="hu"></span> %</h6>
+                        </div>
+                        <div class="col-sm" style="line-height: 1">
+                           <h3>Pressure</h3>
+                           <br>
+                           <h6><span id="prs"></span> hPa</h6>
+                        </div>
+                        <div class="col-sm" style="line-height: 1">
+                           <h3>Visibility</h3>
+                           <br>
+                           <h6><span id="vis"></span> m</h6>
+                        </div>
+                        <div class="col-sm" style="line-height: 1">
+                           <h3>Wind</h3>
+                           <br>
+                           <h6><span id="ws"></span> m/s</h6>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </center>
+   </div>
+
+<script src="effects.js"> </script>
+<script>
+
+var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var weekdays=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+function getCity(e)
+{
+	e.preventDefault();
+	var cn=document.getElementById("citynm").value;
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', 'http://api.openweathermap.org/data/2.5/weather?q='+cn+'&appid=51c42dfba2bbddf16130195428f9d790');
+	xhr.send(null);
+
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				var resp = JSON.parse(xhr.responseText);
+				if(resp.cod != 200)
+				{
+					alert(resp.message);
+					document.getElementById("diss").style.display="none";
+				}
+				else
+				{
+					populate_val(resp);
+					document.getElementById("diss").style.display="block";
+				}
+			} else {
+				console.log('Error: ' + xhr.status);
+				alert("Invalid city name");
+				document.getElementById("diss").style.display="none";
+			}
+		}
+	};
+	document.getElementById("citynm").value="";
+	return false;
+}
+function populate_val(resp)
+{
+	document.getElementById("cityname").innerText=resp.name;
+	document.getElementById("temp").innerText=(resp.main.temp-273).toFixed(1);
+	document.getElementById("wea").innerText=resp.weather[0].main;
+	document.getElementById("high").innerText=(resp.main.temp_max-273).toFixed(1);
+	document.getElementById("low").innerText=(resp.main.temp_min-273).toFixed(1);
+	document.getElementById("fl").innerText=(resp.main.feels_like-273).toFixed(1);
+	document.getElementById("hu").innerText=(resp.main.humidity);
+	document.getElementById("prs").innerText=(resp.main.pressure);
+	document.getElementById("vis").innerText=(resp.visibility);
+	document.getElementById("ws").innerText=(resp.wind.speed);
+	
+	stoprainloop();
+	document.getElementById("rain").style.display="none";
+	
+		document.body.classList.remove("night");
+		document.body.classList.remove("afternoon");
+		document.body.classList.remove("evening");
+		document.body.classList.remove("day");		
+		document.getElementById("m").classList.remove("cloudsd");	
+		document.getElementById("m").classList.remove("clouds");	
+		document.getElementById("m").classList.remove("mist");
+		document.getElementById("m").classList.remove("thunder");
+	
+	var dt = new Date((resp.dt+resp.timezone)*1000);
+	document.getElementById("dt").innerText =(dt.getUTCDate()+" "+months[dt.getUTCMonth()]+" "+dt.getUTCFullYear());
+	document.getElementById("timday").innerText =(dt.getUTCHours()+":"+("0"+dt.getUTCMinutes()).substr(-2)+" "+weekdays[dt.getUTCDay()]);
+	var h=dt.getUTCHours();
+	
+	if( h>=6 && h<12 )
+	{
+		document.body.classList.add("day");
+	}
+	else if(h>=12 && h<16)
+	{
+		document.body.classList.add("afternoon");
+	}
+	else if(h>=16 && h<19)
+	{
+		document.body.classList.add("evening");
+	}
+	
+	else
+	{
+		document.body.classList.add("night");
+		
+	}
+	
+	
+	
+	if(resp.weather[0].main == "Rain" || resp.weather[0].main == "Drizzle"){
+		startrainloop();
+		document.getElementById("rain").style.display="block";
+	}
+	else if(resp.weather[0].main == "Clouds")
+	{
+		if(h>=6 && h<19)
+			document.getElementById("m").classList.add("cloudsd");
+		else
+			document.getElementById("m").classList.add("clouds");
+
+	}
+	else if(resp.weather[0].main == "Thunderstorm")
+	{
+		document.getElementById("m").classList.add("thunder");
+		startrainloop();
+		document.getElementById("rain").style.display="block";
+	}
+	else if(resp.weather[0].main == "Mist" || resp.weather[0].main == "Haze")
+	{
+		document.getElementById("m").classList.add("mist");
+	}
+	
+	
+	
+	
+}
+
+</script>
+</body>
+</html>
+

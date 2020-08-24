@@ -1,0 +1,148 @@
+.clouds
+{ 
+	background-image: url("cloudd3.png");
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	min-height:100%;
+	min-width:100%;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+
+}
+
+.cloudsd
+{ 
+	background-image: url("cloudd1.png");
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	min-height:100%;
+	min-width:100%;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+}
+
+.mist
+{
+	
+}
+.mist::before
+{ content: "";
+    z-index: -1;
+	background-image: url("fog.png");
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	min-height:100%;
+	min-width:100%;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+	opacity: 0.3;
+}
+
+.thunder {
+}
+
+.thunder:after {
+    content: '';
+    width: 100%;
+    height: 100%;
+   display: block;
+   position: absolute;
+   top: 0;
+   left: 0;
+    z-index: -1;
+    animation: thunder-bg 6s infinite;
+  }
+
+@keyframes thunder-bg {
+      0% {
+        background-color: rgba(34,34,34,0);
+      }
+      9% {
+        background-color: rgba(34,34,34,0);
+      }
+      10% {
+        background-color: rgba(100,100,100,.3);
+      }
+      10.5% {
+        background-color: rgba(34,34,34,0);
+      }
+      80% {
+        background-color: rgba(34,34,34,0);
+      }
+      82% {
+        background-color: rgba(34,34,34,.3);
+      }
+      83% {
+        background-color: rgba(34,34,34,0);
+      }
+      83.5% {
+        background-color: rgba(59,59,59,.3);
+      }
+      100% {
+        background-color: rgba(34,34,34,0);
+      }
+
+}
+
+.night
+{
+	background-image: linear-gradient(#000000,#191970,#4B0082,#00008B);
+	min-height:100%;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+	color:white;
+	text-shadow: 1px 1px black;
+}
+.day
+{
+	background-image: linear-gradient(#87CEFA,#87CEEB,#ADD8E6,#FFFACD,#FFFFE0);
+	min-height:100%;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+	color:black;
+	font-shadow:grey;
+}
+.afternoon
+{
+	background-image: linear-gradient(#AFEEEE,#E0FFFF,#F0F8FF,#FFFFE0,#FFFACD,#FAFAD2,#FFEFD5);
+	min-height:100%;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+	color:black;
+	font-shadow:grey;
+}
+.evening
+{
+	background-image: linear-gradient(#B0C4DE,#E6E6FA,#F08080,#FFA07A,#FF7F50);
+	min-height:100%;
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-attachment: fixed;
+	color:white;
+	font-shadow:grey;
+}
+#canvas2 {
+  z-index: 10;
+}
+
+#canvas1 {
+  z-index: 100;
+}
+canvas {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
